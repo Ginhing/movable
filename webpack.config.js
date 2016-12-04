@@ -20,7 +20,13 @@ module.exports = {
   },
   module: {
     rules: [
-      {test: /\.js$/, loader: 'babel-loader', options: babelOptions}
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: path.resolve(__dirname, 'node_modules'),
+        options: babelOptions
+      },
+      {test: /\.vue$/, loader: 'vue-loader'}
     ]
   },
   devtool: IS_PRODUCTION ? 'source-map' : 'eval',
