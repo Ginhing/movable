@@ -1,6 +1,5 @@
-const ON_START = 'mousedown'
-const ON_MOVE = 'mousemove'
-const ON_STOP = 'mouseup'
+import {ON_MOVE} from './constants'
+
 const noop = () => {}
 const movingArea = document.body
 
@@ -38,33 +37,21 @@ class Point {
   }
 }
 
-export class MovableElement {
+export class MovableCore {
   constructor(
-    node, {
+    handleMove, {
       onStart = noop,
       onMove = noop,
       onStop = noop
     } = {}
   ) {
-    this.$el = node
+    this.handleMove = handleMove
     this.callback = {onStart, onMove, onStop}
     this.rectangle = null
     this.movingPoint = new Point()
     this.movedPoint = new Point()
     this.startingPoint = new Point()
     this.moving = false
-
-    this.install()
-  }
-
-  install() {
-    this.$el.addEventListener(ON_START, this._start)
-    this.$el.addEventListener(ON_STOP, this._stop)
-  }
-
-  uninstall() {
-    this.$el.removeEventListener(ON_START, this._start)
-    this.$el.removeEventListener(ON_STOP, this._stop)
   }
 
   _start = (e) => {
@@ -72,7 +59,7 @@ export class MovableElement {
 
     movingArea.addEventListener(ON_MOVE, this._move)
     this.startingPoint.set({x: e.clientX, y: e.clientY})
-    this.rectangle = this.$el.getBoundingClientRect()
+    this.rectangle = e.currentTarget.getBoundingClientRect()
     this.moving = true
     movingArea.style.cssText = userSelect('none')
   }
@@ -81,13 +68,11 @@ export class MovableElement {
     if (this.moving) {
       const ePoint = new Point({x: e.clientX, y: e.clientY})
       this.movingPoint.set(
-        this.movedPoint.move(
-          ePoint.diff(this.startingPoint)
-        )
+        this.movedPoint.move(ePoint).diff(this.startingPoint)
       )
       if (this.callback.onMove(e, this.movingPoint) === false) return false
 
-      this._applyTranslate(this.movingPoint)
+      this.handleMove.call(null, this.movingPoint)
     }
   }
 
@@ -100,16 +85,11 @@ export class MovableElement {
     movingArea.style.cssText = userSelect()
   }
 
-  _applyTranslate({x, y}) {
-    cancelRAF(this.translateRequest)
-    this.translateRequest = RAF(() => this.$el.style.transform = `translate(${x}px,${y}px)`)
+  get onStart() {
+    return this._start
   }
-}
 
-function cancelRAF(id) {
-  id && window.cancelAnimationFrame(id)
-}
-
-function RAF(func) {
-  window.requestAnimationFrame(func)
+  get onStop() {
+    return this._stop
+  }
 }

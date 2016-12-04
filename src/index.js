@@ -1,1 +1,1 @@
-export {MovableElement} from './core'
+export {MovableElement} from './movableElement'
