@@ -7,18 +7,26 @@
   <title>Document</title>
   <style media="screen">
     html, body{
-      height: 100%;
+      margin: 0;
+      height: 100vmin;
+      width: 100vmax;
+      display: flex;
     }
-    .movable{
+    span {
+      padding: 10px;
+      background-color: #0ff;
       display: inline-block;
       border: 1px solid red;
     }
   </style>
 </head>
 <body>
-  <h1>
-    <span id="movable1" class="movable">move this</span>
-  </h1>
+  <div id="example">
+    <div>
+      <span>vanilla movable</span>
+    </div>
+  </div>
+  <div id="vue-example"></div>
   <script src="bundle.js"></script>
 </body>
 </html>

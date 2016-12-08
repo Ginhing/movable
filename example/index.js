@@ -1,4 +1,10 @@
-import {MovableElement} from '../src'
+import Vue from 'vue'
+import {MovableElement} from '../src/movableElement'
+import vueExample from './example.vue'
 
-const movable1 = document.getElementById('movable1')
-new MovableElement(movable1)
+new MovableElement(document.getElementById('example').firstElementChild)
+
+new Vue({
+  el: '#vue-example',
+  render: h => h(vueExample)
+})
